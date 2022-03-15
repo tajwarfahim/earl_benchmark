@@ -282,6 +282,11 @@ class EARLEnvs(object):
             env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
             return env.get_init_states()
 
+        elif self._env_name.startswith("maze-walls"):
+            env = gym.make(self.env_name)
+            env.reset()
+            return env.get_obs()
+
         else:
             # make a new copy of environment to ensure that related parameters do not get affected by collection of reset states
             cur_env = self.get_eval_env()
@@ -308,10 +313,14 @@ class EARLEnvs(object):
 
             return sawyer_peg.goal_states
 
-        if self._env_name == "kitchen":
+        elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
             return kitchen.goal_states
+
+        elif self._env_name.startswith("maze-walls"):
+            env = gym.make(self.env_name)
+            return env.goal
 
     def get_demonstrations(self):
         # use the current file to locate the demonstrations
