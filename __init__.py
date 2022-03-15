@@ -51,7 +51,7 @@ deployment_eval_config = {
         "num_initial_state_samples": 1,
         "num_goals": 1,
         "train_horizon": 50,
-        "eval_horizon": 1000,
+        "eval_horizon": 50,
     },
 }
 
@@ -91,7 +91,7 @@ continuing_eval_config = {
         "num_initial_state_samples": 1,
         "num_goals": 1,
         "train_horizon": 50,
-        "goal_change_frequency": 2000,
+        "goal_change_frequency": 500,
     },
 }
 
