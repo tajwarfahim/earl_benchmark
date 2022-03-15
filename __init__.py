@@ -283,7 +283,7 @@ class EARLEnvs(object):
             return env.get_init_states()
 
         elif self._env_name.startswith("maze-walls"):
-            env = gym.make(self.env_name)
+            env = gym.make(self._env_name)
             env.reset()
             return env.get_obs()
 
@@ -319,7 +319,7 @@ class EARLEnvs(object):
             return kitchen.goal_states
 
         elif self._env_name.startswith("maze-walls"):
-            env = gym.make(self.env_name)
+            env = gym.make(self._env_name)
             return env.goal
 
     def get_demonstrations(self):
