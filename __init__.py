@@ -3,6 +3,7 @@
 import os
 import numpy as np
 import pickle
+import gym
 
 from earl_benchmark.wrappers import persistent_state_wrapper
 from earl_benchmark.wrappers import lifelong_wrapper
