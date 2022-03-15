@@ -49,8 +49,8 @@ deployment_eval_config = {
     },
     "maze-walls": {
         "num_initial_state_samples": 1,
-        "num_goals": 4,
-        "train_horizon": int(1e5),
+        "num_goals": 1,
+        "train_horizon": 50,
         "eval_horizon": 1000,
     },
 }
@@ -89,9 +89,9 @@ continuing_eval_config = {
     },
     "maze-walls": {
         "num_initial_state_samples": 1,
-        "num_goals": 4,
-        "train_horizon": int(1e5),
-        "eval_horizon": 1000,
+        "num_goals": 1,
+        "train_horizon": 50,
+        "goal_change_frequency": 2000,
     },
 }
 
