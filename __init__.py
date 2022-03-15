@@ -185,7 +185,7 @@ class EARLEnvs(object):
             train_env = kitchen.Kitchen(
                 task=kitchen_task, reward_type=self._reward_type
             )
-        elif self._env_name.beginswith("maze-walls"):
+        elif self._env_name.startswith("maze-walls"):
             train_env = gym.make(self._env_name)
         else:
             raise ValueError("Given env name not supported.")
@@ -230,7 +230,7 @@ class EARLEnvs(object):
             except:
                 raise Exception("Must install pybullet to use minitaur env")
             eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv()
-        elif self._env_name == "maze-walls":
+        elif self._env_name.startswith("maze-walls"):
             eval_env = gym.make(self._env_name)
 
         return persistent_state_wrapper.PersistentStateWrapper(
