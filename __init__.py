@@ -241,6 +241,8 @@ class EARLEnvs(object):
     def has_demos(self):
         if self._env_name in ["tabletop_manipulation", "sawyer_door", "sawyer_peg"]:
             return True
+        elif self._env_name.startswith("maze-walls"):
+            return True
         else:
             return False
 
@@ -326,6 +328,7 @@ class EARLEnvs(object):
         # use the current file to locate the demonstrations
         base_path = os.path.abspath(__file__)
         demo_dir = os.path.join(os.path.dirname(base_path), "demonstrations")
+        forward_demos, reverse_demos = None, None
         try:
             forward_demos = pickle.load(
                 open(
@@ -339,8 +342,12 @@ class EARLEnvs(object):
                     "rb",
                 )
             )
-            return forward_demos, reverse_demos
         except:
+            if forward_demos is None:
+                print("forward demonstrations not found")
+            if reverse_demos is None:
+                print("reverse demonstrations not found")
             print(
                 "please download the demonstrations corresponding to ", self._env_name
             )
+        return forward_demos, reverse_demos
