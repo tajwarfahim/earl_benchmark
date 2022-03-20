@@ -243,6 +243,8 @@ class EARLEnvs(object):
             return True
         elif self._env_name.startswith("maze-walls"):
             return True
+        elif self._env_name.startswith("maze-config"):
+            return True
         else:
             return False
 
