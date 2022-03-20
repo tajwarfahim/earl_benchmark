@@ -47,11 +47,11 @@ deployment_eval_config = {
         "train_horizon": int(1e5),
         "eval_horizon": 1000,
     },
-    "maze-walls": {
+    "maze": {
         "num_initial_state_samples": 1,
         "num_goals": 1,
-        "train_horizon": 50,
-        "eval_horizon": 50,
+        "train_horizon": 1000,
+        "eval_horizon": 1000,
     },
 }
 
@@ -87,7 +87,7 @@ continuing_eval_config = {
         "train_horizon": int(1e5),
         "goal_change_frequency": 2000,
     },
-    "maze-walls": {
+    "maze": {
         "num_initial_state_samples": 1,
         "num_goals": 1,
         "train_horizon": 50,
@@ -108,8 +108,8 @@ class EARLEnvs(object):
         **kwargs
     ):
         self._env_name = env_name
-        if env_name.startswith("maze-walls"):
-            env_name = "maze-walls"
+        if self._env_name.startswith("maze"):
+            env_name = "maze"
 
         self._reward_type = reward_type
         self._reset_train_env_at_goal = reset_train_env_at_goal
@@ -186,7 +186,7 @@ class EARLEnvs(object):
             train_env = kitchen.Kitchen(
                 task=kitchen_task, reward_type=self._reward_type
             )
-        elif self._env_name.startswith("maze-walls"):
+        elif self._env_name.startswith("maze"):
             train_env = gym.make(self._env_name)
         else:
             raise ValueError("Given env name not supported.")
@@ -231,7 +231,7 @@ class EARLEnvs(object):
             except:
                 raise Exception("Must install pybullet to use minitaur env")
             eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv()
-        elif self._env_name.startswith("maze-walls"):
+        elif self._env_name.startswith("maze"):
             eval_env = gym.make(self._env_name)
 
         return persistent_state_wrapper.PersistentStateWrapper(
@@ -241,9 +241,7 @@ class EARLEnvs(object):
     def has_demos(self):
         if self._env_name in ["tabletop_manipulation", "sawyer_door", "sawyer_peg"]:
             return True
-        elif self._env_name.startswith("maze-walls"):
-            return True
-        elif self._env_name.startswith("maze-config"):
+        elif self._env_name.startswith("maze"):
             return True
         else:
             return False
@@ -286,7 +284,7 @@ class EARLEnvs(object):
             env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
             return env.get_init_states()
 
-        elif self._env_name.startswith("maze-walls"):
+        elif self._env_name.startswith("maze"):
             env = gym.make(self._env_name)
             env.reset()
             return env.get_obs()
@@ -322,7 +320,7 @@ class EARLEnvs(object):
 
             return kitchen.goal_states
 
-        elif self._env_name.startswith("maze-walls"):
+        elif self._env_name.startswith("maze"):
             env = gym.make(self._env_name)
             return env.goal
 
