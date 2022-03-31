@@ -23,6 +23,12 @@ deployment_eval_config = {
         "train_horizon": int(2e5),
         "eval_horizon": 200,
     },
+    "tabletop_manipulation_no_walls": {
+        "num_initial_state_samples": 1,
+        "num_goals": 4,
+        "train_horizon": int(2e5),
+        "eval_horizon": 200,
+    },
     "sawyer_door": {
         "num_initial_state_samples": 1,
         "num_goals": 1,
@@ -58,6 +64,12 @@ deployment_eval_config = {
 # for continuing evaluation, only set the training horizons and goal/task change frequency.
 continuing_eval_config = {
     "tabletop_manipulation": {
+        "num_initial_state_samples": 1,
+        "num_goals": 4,
+        "train_horizon": int(5e4),
+        "goal_change_frequency": 400,
+    },
+    "tabletop_manipulation_no_walls": {
         "num_initial_state_samples": 1,
         "num_goals": 4,
         "train_horizon": int(5e4),
@@ -154,6 +166,14 @@ class EARLEnvs(object):
                 reward_type=self._reward_type,
                 reset_at_goal=self._reset_train_env_at_goal,
             )
+        elif self._env_name == "tabletop_manipulation_no_walls":
+            from earl_benchmark.envs import tabletop_manipulation_no_walls
+
+            train_env = tabletop_manipulation_no_walls.TabletopManipulationNoWalls(
+                task_list="rc_r-rc_k-rc_g-rc_b",
+                reward_type=self._reward_type,
+                reset_at_goal=self._reset_train_env_at_goal,
+            )
         elif self._env_name == "minitaur":
             try:
                 # from pybullet_envs.bullet import minitaur_gym_env
@@ -208,6 +228,12 @@ class EARLEnvs(object):
             from earl_benchmark.envs import tabletop_manipulation
 
             eval_env = tabletop_manipulation.TabletopManipulation(
+                task_list="rc_r-rc_k-rc_g-rc_b", reward_type=self._reward_type
+            )
+        if self._env_name == "tabletop_manipulation_no_walls":
+            from earl_benchmark.envs import tabletop_manipulation_no_walls
+
+            eval_env = tabletop_manipulation_no_walls.TabletopManipulationNoWalls(
                 task_list="rc_r-rc_k-rc_g-rc_b", reward_type=self._reward_type
             )
         elif self._env_name == "sawyer_door":
@@ -265,6 +291,11 @@ class EARLEnvs(object):
 
             return tabletop_manipulation.initial_states
 
+        elif self._env_name == "tabletop_manipulation_no_walls":
+            from earl_benchmark.envs import tabletop_manipulation_no_walls
+
+            return tabletop_manipulation_no_walls.initial_states
+
         elif self._env_name == "sawyer_door":
             from earl_benchmark.envs import sawyer_door
 
@@ -304,6 +335,11 @@ class EARLEnvs(object):
             from earl_benchmark.envs import tabletop_manipulation
 
             return tabletop_manipulation.goal_states
+
+        elif self._env_name == "tabletop_manipulation_no_walls":
+            from earl_benchmark.envs import tabletop_manipulation_no_walls
+
+            return tabletop_manipulation_no_walls.goal_states
 
         elif self._env_name == "sawyer_door":
             from earl_benchmark.envs import sawyer_door
