@@ -132,7 +132,7 @@ class TabletopManipulationNoWalls(MujocoEnv):
         current_obj_pos = np.array([
           self.sim.data.qpos[i] for i in self.object_dict[self.attached_object]
         ])
-        if np.any(current_obj_pos < -2.8) or np.any(current_obj_pos > 2.8):
+        if np.any(np.abs(current_obj_pos) > 2.8):
           self.dropped_object = True
       self.attached_object = (-1, -1)
 
@@ -185,11 +185,10 @@ class TabletopManipulationNoWalls(MujocoEnv):
   def is_stuck_state(self, obs):
     if len(obs.shape) == 1:
       current_obj_pos = obs[2:4]
-      # obj_outside = np.any(current_obj_pos < -2.8) or np.any(current_obj_pos > 2.8)
       obj_outside = np.any(np.abs(current_obj_pos) > 2.8)
       return obj_outside and obs[4] == -1 and obs[5] == -1
     else:
       current_obj_pos = obs[:, 2:4]
       obj_outside = np.any(np.abs(current_obj_pos) > 2.8, axis=-1)
-      obj_detached = np.all(obs[:, 4:6], axis=-1)
+      obj_detached = np.all(obs[:, 4:6] == -1, axis=-1)
       return np.logical_and(obj_outside, obj_detached)
