@@ -265,7 +265,7 @@ class EARLEnvs(object):
         )
 
     def has_demos(self):
-        if self._env_name in ["tabletop_manipulation", "sawyer_door", "sawyer_peg"]:
+        if self._env_name in ["tabletop_manipulation", "tabletop_manipulation_no_walls", "sawyer_door", "sawyer_peg"]:
             return True
         elif self._env_name.startswith("maze"):
             return True
