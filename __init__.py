@@ -50,8 +50,8 @@ deployment_eval_config = {
     "maze": {
         "num_initial_state_samples": 1,
         "num_goals": 1,
-        "train_horizon": 1000,
-        "eval_horizon": 1000,
+        "train_horizon": 100,
+        "eval_horizon": 100,
     },
 }
 
