@@ -41,6 +41,12 @@ deployment_eval_config = {
         "train_horizon": int(1e5),
         "eval_horizon": 200,
     },
+    "sawyer_peg_small_table": {
+        "num_initial_state_samples": 15,
+        "num_goals": 1,
+        "train_horizon": int(1e5),
+        "eval_horizon": 200,
+    },
     "kitchen": {
         "num_initial_state_samples": 1,
         "train_horizon": int(1e5),
@@ -82,6 +88,12 @@ continuing_eval_config = {
         "goal_change_frequency": 600,
     },
     "sawyer_peg": {
+        "num_initial_state_samples": 15,
+        "num_goals": 1,
+        "train_horizon": int(5e4),
+        "goal_change_frequency": 400,
+    },
+    "sawyer_peg_small_table": {
         "num_initial_state_samples": 15,
         "num_goals": 1,
         "train_horizon": int(5e4),
@@ -197,6 +209,13 @@ class EARLEnvs(object):
                 reward_type=self._reward_type,
                 reset_at_goal=self._reset_train_env_at_goal,
             )
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            train_env = sawyer_peg_small_table.SawyerPegSmallTableV2(
+                reward_type=self._reward_type,
+                reset_at_goal=self._reset_train_env_at_goal,
+            )
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
@@ -244,6 +263,10 @@ class EARLEnvs(object):
             from earl_benchmark.envs import sawyer_peg
 
             eval_env = sawyer_peg.SawyerPegV2(reward_type=self._reward_type)
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            eval_env = sawyer_peg_small_table.SawyerPegSmallTableV2(reward_type=self._reward_type)
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
@@ -265,7 +288,14 @@ class EARLEnvs(object):
         )
 
     def has_demos(self):
-        if self._env_name in ["tabletop_manipulation", "tabletop_manipulation_no_walls", "sawyer_door", "sawyer_peg"]:
+        envs_with_demos = [
+            "tabletop_manipulation",
+            "tabletop_manipulation_no_walls",
+            "sawyer_door",
+            "sawyer_peg",
+            "sawyer_peg_small_table",
+        ]
+        if self._env_name in envs_with_demos:
             return True
         elif self._env_name.startswith("maze"):
             return True
@@ -305,6 +335,11 @@ class EARLEnvs(object):
             from earl_benchmark.envs import sawyer_peg
 
             return sawyer_peg.initial_states
+
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            return sawyer_peg_small_table.initial_states
 
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
@@ -350,6 +385,11 @@ class EARLEnvs(object):
             from earl_benchmark.envs import sawyer_peg
 
             return sawyer_peg.goal_states
+
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            return sawyer_peg_small_table.goal_states
 
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
