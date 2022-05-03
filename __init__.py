@@ -65,6 +65,12 @@ deployment_eval_config = {
         "train_horizon": 1000,
         "eval_horizon": 1000,
     },
+    "half_cheetah_flip": {
+        "num_initial_state_samples": 1,
+        "num_goals": 6,
+        "train_horizon": int(1e6),
+        "eval_horizon": 1000,
+    },
 }
 
 # for continuing evaluation, only set the training horizons and goal/task change frequency.
@@ -116,6 +122,12 @@ continuing_eval_config = {
         "num_goals": 1,
         "train_horizon": 50,
         "goal_change_frequency": 500,
+    },
+    "half_cheetah_flip": {
+        "num_initial_state_samples": 1,
+        "num_goals": 6,
+        "train_horizon": int(1e6),
+        "goal_change_frequency": 1000,
     },
 }
 
@@ -225,7 +237,7 @@ class EARLEnvs(object):
             train_env = kitchen.Kitchen(
                 task=kitchen_task, reward_type=self._reward_type
             )
-        elif self._env_name.startswith("maze"):
+        elif self._env_name.startswith("maze") or self._env_name == "half_cheetah_flip":
             train_env = gym.make(self._env_name)
         else:
             raise ValueError("Given env name not supported.")
@@ -280,7 +292,7 @@ class EARLEnvs(object):
             except:
                 raise Exception("Must install pybullet to use minitaur env")
             eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv()
-        elif self._env_name.startswith("maze"):
+        elif self._env_name.startswith("maze") or self._env_name == "half_cheetah_flip":
             eval_env = gym.make(self._env_name)
 
         return persistent_state_wrapper.PersistentStateWrapper(
@@ -355,6 +367,10 @@ class EARLEnvs(object):
             env.reset()
             return env.get_obs()
 
+        elif self._env_name == "half_cheetah_flip":
+            env = gym.make(self._env_name)
+            return env.get_init_states()
+
         else:
             # make a new copy of environment to ensure that related parameters do not get affected by collection of reset states
             cur_env = self.get_eval_env()
@@ -399,6 +415,10 @@ class EARLEnvs(object):
         elif self._env_name.startswith("maze"):
             env = gym.make(self._env_name)
             return env.goal
+
+        elif self._env_name == "half_cheetah_flip":
+            env = gym.make(self._env_name)
+            return env.get_goal_states()
 
     def get_demonstrations(self):
         # use the current file to locate the demonstrations
