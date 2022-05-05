@@ -288,6 +288,9 @@ class SawyerPegSmallTableV2(SawyerXYZEnv):
 
     return np.linalg.norm(obs[4:7] - obs[11:14]) <= self.TARGET_RADIUS
 
+  def is_initial_state(self, obs):
+    return np.min(np.linalg.norm(obs[:7] - initial_states, axis=-1)) <= self.TARGET_RADIUS
+
   def is_stuck_state(self, obs):
     if len(obs.shape) == 1:
       obj = obs[4:7]
