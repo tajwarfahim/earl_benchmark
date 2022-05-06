@@ -182,6 +182,9 @@ class TabletopManipulationNoWalls(MujocoEnv):
 
     return np.linalg.norm(obs[:4] - obs[6:-2]) <= 0.2
 
+  def is_initial_state(self, obs):
+    return np.linalg.norm(obs[:4] - initial_states[0, :4]) <= 0.2
+
   def is_stuck_state(self, obs):
     if len(obs.shape) == 1:
       current_obj_pos = obs[2:4]

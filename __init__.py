@@ -41,6 +41,12 @@ deployment_eval_config = {
         "train_horizon": int(1e5),
         "eval_horizon": 200,
     },
+    "sawyer_peg_small_table": {
+        "num_initial_state_samples": 15,
+        "num_goals": 1,
+        "train_horizon": int(1e5),
+        "eval_horizon": 200,
+    },
     "kitchen": {
         "num_initial_state_samples": 1,
         "train_horizon": int(1e5),
@@ -58,6 +64,12 @@ deployment_eval_config = {
         "num_goals": 1,
         "train_horizon": 100,
         "eval_horizon": 100,
+    },
+    "half_cheetah_flip": {
+        "num_initial_state_samples": 1,
+        "num_goals": 6,
+        "train_horizon": int(1e6),
+        "eval_horizon": 1000,
     },
 }
 
@@ -87,6 +99,12 @@ continuing_eval_config = {
         "train_horizon": int(5e4),
         "goal_change_frequency": 400,
     },
+    "sawyer_peg_small_table": {
+        "num_initial_state_samples": 15,
+        "num_goals": 1,
+        "train_horizon": int(5e4),
+        "goal_change_frequency": 400,
+    },
     "kitchen": {
         "num_initial_state_samples": 1,
         "train_horizon": int(5e4),
@@ -104,6 +122,12 @@ continuing_eval_config = {
         "num_goals": 1,
         "train_horizon": 50,
         "goal_change_frequency": 500,
+    },
+    "half_cheetah_flip": {
+        "num_initial_state_samples": 1,
+        "num_goals": 6,
+        "train_horizon": int(1e6),
+        "goal_change_frequency": 1000,
     },
 }
 
@@ -197,6 +221,13 @@ class EARLEnvs(object):
                 reward_type=self._reward_type,
                 reset_at_goal=self._reset_train_env_at_goal,
             )
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            train_env = sawyer_peg_small_table.SawyerPegSmallTableV2(
+                reward_type=self._reward_type,
+                reset_at_goal=self._reset_train_env_at_goal,
+            )
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
@@ -206,7 +237,7 @@ class EARLEnvs(object):
             train_env = kitchen.Kitchen(
                 task=kitchen_task, reward_type=self._reward_type
             )
-        elif self._env_name.startswith("maze"):
+        elif self._env_name.startswith("maze") or self._env_name == "half_cheetah_flip":
             train_env = gym.make(self._env_name)
         else:
             raise ValueError("Given env name not supported.")
@@ -244,6 +275,10 @@ class EARLEnvs(object):
             from earl_benchmark.envs import sawyer_peg
 
             eval_env = sawyer_peg.SawyerPegV2(reward_type=self._reward_type)
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            eval_env = sawyer_peg_small_table.SawyerPegSmallTableV2(reward_type=self._reward_type)
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
@@ -257,7 +292,7 @@ class EARLEnvs(object):
             except:
                 raise Exception("Must install pybullet to use minitaur env")
             eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv()
-        elif self._env_name.startswith("maze"):
+        elif self._env_name.startswith("maze") or self._env_name == "half_cheetah_flip":
             eval_env = gym.make(self._env_name)
 
         return persistent_state_wrapper.PersistentStateWrapper(
@@ -265,7 +300,14 @@ class EARLEnvs(object):
         )
 
     def has_demos(self):
-        if self._env_name in ["tabletop_manipulation", "tabletop_manipulation_no_walls", "sawyer_door", "sawyer_peg"]:
+        envs_with_demos = [
+            "tabletop_manipulation",
+            "tabletop_manipulation_no_walls",
+            "sawyer_door",
+            "sawyer_peg",
+            "sawyer_peg_small_table",
+        ]
+        if self._env_name in envs_with_demos:
             return True
         elif self._env_name.startswith("maze"):
             return True
@@ -306,6 +348,11 @@ class EARLEnvs(object):
 
             return sawyer_peg.initial_states
 
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            return sawyer_peg_small_table.initial_states
+
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
@@ -319,6 +366,10 @@ class EARLEnvs(object):
             env = gym.make(self._env_name)
             env.reset()
             return env.get_obs()
+
+        elif self._env_name == "half_cheetah_flip":
+            env = gym.make(self._env_name)
+            return env.get_init_states()
 
         else:
             # make a new copy of environment to ensure that related parameters do not get affected by collection of reset states
@@ -351,6 +402,11 @@ class EARLEnvs(object):
 
             return sawyer_peg.goal_states
 
+        elif self._env_name == "sawyer_peg_small_table":
+            from earl_benchmark.envs import sawyer_peg_small_table
+
+            return sawyer_peg_small_table.goal_states
+
         elif self._env_name == "kitchen":
             from earl_benchmark.envs import kitchen
 
@@ -359,6 +415,10 @@ class EARLEnvs(object):
         elif self._env_name.startswith("maze"):
             env = gym.make(self._env_name)
             return env.goal
+
+        elif self._env_name == "half_cheetah_flip":
+            env = gym.make(self._env_name)
+            return env.get_goal_states()
 
     def get_demonstrations(self):
         # use the current file to locate the demonstrations
