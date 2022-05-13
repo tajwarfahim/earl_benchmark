@@ -237,8 +237,13 @@ class EARLEnvs(object):
             train_env = kitchen.Kitchen(
                 task=kitchen_task, reward_type=self._reward_type
             )
-        elif self._env_name.startswith("maze") or self._env_name == "half_cheetah_flip":
+        elif self._env_name.startswith("maze"):
             train_env = gym.make(self._env_name)
+        elif self._env_name == "half_cheetah_flip":
+            train_env = gym.make(
+                self._env_name,
+                reward_type=self._reward_type,
+            )
         else:
             raise ValueError("Given env name not supported.")
 
