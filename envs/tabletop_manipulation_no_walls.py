@@ -195,3 +195,11 @@ class TabletopManipulationNoWalls(MujocoEnv):
       obj_outside = np.any(np.abs(current_obj_pos) > 2.8, axis=-1)
       obj_detached = np.all(obs[:, 4:6] == -1, axis=-1)
       return np.logical_and(obj_outside, obj_detached)
+
+  def sample_stuck_state(self):
+    random_pos = np.random.uniform(-3.8, 3.8, size=4)
+    while not np.any(np.abs(random_pos[2:]) > 2.8):
+      random_pos = np.random.uniform(-3.8, 3.8, size=4)
+    cur_pos = np.concatenate([random_pos, [-1.0, -1.0], self.get_next_goal()])
+    assert self.is_stuck_state(cur_pos)
+    return cur_pos.astype(np.float32)
