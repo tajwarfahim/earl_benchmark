@@ -238,7 +238,11 @@ class EARLEnvs(object):
                 task=kitchen_task, reward_type=self._reward_type
             )
         elif self._env_name.startswith("maze"):
-            train_env = gym.make(self._env_name)
+            train_env = gym.make(
+                self._env_name,
+                false_positive_noise=self._kwargs["false_positive_noise"],
+                false_negative_noise=self._kwargs["false_negative_noise"],
+            )
         elif self._env_name == "half_cheetah_flip":
             train_env = gym.make(
                 self._env_name,
